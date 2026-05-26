@@ -12,7 +12,12 @@ type Config struct {
 }
 
 type db struct {
-	Dsn string
+	DbHost     string
+	DbPort     string
+	DbUser     string
+	DbName     string
+	DbPassword string
+	Dsn        string
 }
 
 type jwt struct {
@@ -35,7 +40,8 @@ func initDb() *db {
 	name := os.Getenv("DB_NAME")
 	password := os.Getenv("DB_PASSWORD")
 
-	return &db{Dsn: "host=" + host + " port=" + port + " user=" + user + " dbname=" + name + " password=" + password + " sslmode=disable"}
+	dsn := "host=" + host + " port=" + port + " user=" + user + " dbname=" + name + " password=" + password + " sslmode=disable"
+	return &db{DbHost: host, DbPort: port, DbUser: user, DbName: name, DbPassword: password, Dsn: dsn}
 }
 
 func initS3() *s3 {

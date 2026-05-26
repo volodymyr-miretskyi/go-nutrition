@@ -6,16 +6,17 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"github.com/volodymyr-miretskyi/go-nutrition/internal/app/config"
+	"github.com/volodymyr-miretskyi/go-nutrition/internal/app/server"
 )
 
 func main() {
 	err := godotenv.Load()
 
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal("Error loading .env file", err)
 	}
 
 	ctx := context.Background()
@@ -25,12 +26,19 @@ func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
 
-	conn, dbConnectionErr := pgx.Connect(ctx, cfg.DB.Dsn)
+	pool, dbConnectionErr := pgxpool.New(ctx, cfg.DB.Dsn)
 
 	if dbConnectionErr != nil {
 		slog.Error("database is failed to connect", "error", dbConnectionErr)
 		os.Exit(1)
 	}
 
-	defer conn.Close(ctx)
+	defer pool.Close()
+
+	srv := server.New(cfg, pool)
+	srvErr := srv.Run()
+
+	if srvErr != nil {
+		log.Fatal("Failed to start server: ", srvErr)
+	}
 }
