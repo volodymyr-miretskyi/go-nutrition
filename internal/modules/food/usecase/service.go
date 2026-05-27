@@ -19,3 +19,7 @@ func NewFoodUsecase(r FoodRepository) *FoodUsecase {
 func (u *FoodUsecase) GetAllFoods(ctx context.Context) ([]domain.Food, error) {
 	return u.repo.GetAll(ctx)
 }
+
+func (u *FoodUsecase) SaveFood(ctx context.Context, food *domain.Food) error {
+	return u.repo.Save(ctx, food)
+}

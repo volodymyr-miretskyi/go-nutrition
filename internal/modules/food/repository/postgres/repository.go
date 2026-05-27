@@ -39,6 +39,7 @@ func (r *FoodRepository) GetAll(ctx context.Context) ([]domain.Food, error) {
 		err := rows.Scan(
 			&food.ID,
 			&food.ImageURL,
+			&food.Comment,
 			&food.Nutrients,
 		)
 
@@ -50,4 +51,38 @@ func (r *FoodRepository) GetAll(ctx context.Context) ([]domain.Food, error) {
 	}
 
 	return foods, nil
+}
+
+func (r *FoodRepository) Save(ctx context.Context, food *domain.Food) error {
+	query := `
+	INSERT INTO foods (
+		id,
+		image_url,
+		comment,
+		calories,
+		protein,
+		fat,
+		carbs
+	) VALUES (
+		$1,
+		$2,
+		$3,
+		$4,
+		$5,
+		$6,
+		$7
+	)
+	`
+	_, err := r.db.Exec(
+		ctx, query,
+		food.ID,
+		food.ImageURL,
+		food.Comment,
+		food.Nutrients.Calories,
+		food.Nutrients.Protein,
+		food.Nutrients.Fat,
+		food.Nutrients.Carbs,
+	)
+
+	return err
 }
