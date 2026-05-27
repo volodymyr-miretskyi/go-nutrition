@@ -12,5 +12,6 @@ func RegisterFoodRoutes(router *gin.RouterGroup, u *usecase.FoodUsecase) {
 
 	{
 		food.GET("/", handler.GetFoods)
+		food.POST("/", handler.SaveFood)
 	}
 }

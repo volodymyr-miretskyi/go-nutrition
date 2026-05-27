@@ -1,6 +1,9 @@
 package config
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 type Config struct {
 	APP_ENV string
@@ -40,7 +43,9 @@ func initDb() *db {
 	name := os.Getenv("DB_NAME")
 	password := os.Getenv("DB_PASSWORD")
 
-	dsn := "host=" + host + " port=" + port + " user=" + user + " dbname=" + name + " password=" + password + " sslmode=disable"
+	dsn := os.Getenv("DB_URL")
+
+	fmt.Print("DSN ", dsn)
 	return &db{DbHost: host, DbPort: port, DbUser: user, DbName: name, DbPassword: password, Dsn: dsn}
 }
 

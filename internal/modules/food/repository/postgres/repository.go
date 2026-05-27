@@ -40,7 +40,12 @@ func (r *FoodRepository) GetAll(ctx context.Context) ([]domain.Food, error) {
 			&food.ID,
 			&food.ImageURL,
 			&food.Comment,
-			&food.Nutrients,
+			&food.Nutrients.Calories,
+			&food.Nutrients.Proteins,
+			&food.Nutrients.Fats,
+			&food.Nutrients.Carbs,
+			&food.CreatedAt,
+			&food.UpdatedAt,
 		)
 
 		if err != nil {
@@ -60,8 +65,8 @@ func (r *FoodRepository) Save(ctx context.Context, food *domain.Food) error {
 		image_url,
 		comment,
 		calories,
-		protein,
-		fat,
+		proteins,
+		fats,
 		carbs
 	) VALUES (
 		$1,
@@ -79,8 +84,8 @@ func (r *FoodRepository) Save(ctx context.Context, food *domain.Food) error {
 		food.ImageURL,
 		food.Comment,
 		food.Nutrients.Calories,
-		food.Nutrients.Protein,
-		food.Nutrients.Fat,
+		food.Nutrients.Proteins,
+		food.Nutrients.Fats,
 		food.Nutrients.Carbs,
 	)
 

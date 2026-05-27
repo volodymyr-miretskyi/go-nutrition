@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -9,11 +11,13 @@ type Food struct {
 	ImageURL  string
 	Comment   string
 	Nutrients Nutrients
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type Nutrients struct {
-	Calories string
-	Protein  string
-	Carbs    string
-	Fat      string
+	Calories int
+	Proteins int
+	Carbs    int
+	Fats     int
 }
