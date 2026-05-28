@@ -14,5 +14,5 @@ func (s *Server) mountRoutes() {
 
 	api := s.router.Group("/api/v1")
 
-	food.InitModule(api, s.db)
+	food.InitModule(api, s.db, s.cfg)
 }

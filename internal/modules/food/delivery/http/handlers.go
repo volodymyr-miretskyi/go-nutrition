@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"github.com/volodymyr-miretskyi/go-nutrition/internal/modules/food/domain"
 	"github.com/volodymyr-miretskyi/go-nutrition/internal/modules/food/usecase"
 )
 
@@ -30,29 +28,33 @@ func (h *FoodHandler) GetFoods(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, foods)
+	c.JSON(http.StatusOK, GetAllFoodResponse{Foods: foods})
 }
 
-func (h *FoodHandler) SaveFood(c *gin.Context) {
-	var req SaveFoodRequest
+func (h *FoodHandler) AnalyzeAndSaveFood(c *gin.Context) {
 
-	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-
+	fileHeader, err := c.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "image is required"})
 		return
 	}
 
-	foodId := uuid.New()
-	params := domain.Food{
-		ID:        foodId,
-		ImageURL:  req.ImageURL,
-		Comment:   req.Comment,
-		Nutrients: req.Nutrients,
+	file, err := fileHeader.Open()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot open image"})
+		return
+	}
+	defer file.Close()
+
+	comment := c.PostForm("comment")
+	params := &usecase.AnalyzeAndSaveFoodParams{
+		File:     file,
+		Filename: "",
+		Comment:  comment,
 	}
 
-	if err := h.usecase.SaveFood(c.Request.Context(), &params); err != nil {
+	resp, err := h.usecase.AnalyzeAndSaveFood(c.Request.Context(), params)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -60,5 +62,5 @@ func (h *FoodHandler) SaveFood(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, SaveFoodResponse{ID: foodId})
+	c.JSON(http.StatusCreated, AnalyzeAndSaveFoodResponse{ID: resp.ID})
 }

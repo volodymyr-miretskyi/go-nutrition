@@ -1,16 +1,21 @@
 package http_food
 
 import (
+	"mime/multipart"
+
 	"github.com/google/uuid"
 	"github.com/volodymyr-miretskyi/go-nutrition/internal/modules/food/domain"
 )
 
-type SaveFoodRequest struct {
-	ImageURL  string           `json:"imageUrl"`
-	Comment   string           `json:"comment"`
-	Nutrients domain.Nutrients `json:"nutrients"`
+type GetAllFoodResponse struct {
+	Foods []domain.Food `json:"foods"`
 }
 
-type SaveFoodResponse struct {
-	ID uuid.UUID
+type AnalyzeAndSaveFoodRequest struct {
+	Image   multipart.File `json:"image"`
+	Comment string         `json:"comment"`
+}
+
+type AnalyzeAndSaveFoodResponse struct {
+	ID uuid.UUID `json:"id"`
 }

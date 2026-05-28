@@ -10,3 +10,11 @@ type FoodRepository interface {
 	GetAll(ctx context.Context) ([]domain.Food, error)
 	Save(ctx context.Context, food *domain.Food) error
 }
+
+type FoodAnalyzer interface {
+	AnalyzeFood(ctx context.Context, params *FoodAnalyzerAnalyzeFoodParams) (*domain.Nutrients, error)
+}
+
+type ImageStorage interface {
+	Upload(ctx context.Context, params *ImageStorageUploadParams) (string, error)
+}
